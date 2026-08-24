@@ -4,6 +4,8 @@
 
 Musaeus (µουσαῖος, *"of the Muses"*) is a from-scratch, permissively-licensed AI assistant in the spirit of open models like Nous Research's Hermes: capable, steerable, and yours. It runs on a local open model by default and can switch to a cloud provider with one line.
 
+![musaeus chat running fully local: a 3B model on Ollama answers by calling the calculator tool](docs/demo.gif)
+
 But Musaeus is also a **teaching codebase**. Every core capability lives in its own clearly-named module, so the architecture reads like a syllabus. Open `guardrails.py` and you are looking at exactly what a guardrail is. Open `rag/` and you are looking at retrieval-augmented generation, one honest step at a time. Nothing is hidden behind a framework.
 
 > Built build-first: start from `git init`, and pull in each concept the moment the build needs it.
