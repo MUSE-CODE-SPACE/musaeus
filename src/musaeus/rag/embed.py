@@ -60,6 +60,13 @@ def _embed_via_provider(texts: list[str], s: Settings) -> list[list[float]] | No
         return None  # Anthropic serves no OpenAI-style embeddings endpoint.
     if s.provider == "local":
         base, key, model = s.local_base_url, "ollama", "nomic-embed-text"
+    elif s.provider == "google":
+        # Gemini's OpenAI-compatibility layer serves /embeddings too.
+        base, key, model = (
+            "https://generativelanguage.googleapis.com/v1beta/openai",
+            s.google_api_key or "",
+            "gemini-embedding-001",
+        )
     else:
         base, key, model = "https://api.openai.com/v1", s.openai_api_key or "", "text-embedding-3-small"
 

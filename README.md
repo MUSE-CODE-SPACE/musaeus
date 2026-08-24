@@ -6,7 +6,7 @@ Musaeus (µουσαῖος, *"of the Muses"*) is a from-scratch, permissively-li
 
 But Musaeus is also a **teaching codebase**. Every core capability lives in its own clearly-named module, so the architecture reads like a syllabus. Open `guardrails.py` and you are looking at exactly what a guardrail is. Open `rag/` and you are looking at retrieval-augmented generation, one honest step at a time. Nothing is hidden behind a framework.
 
-> Built live in the [Musaeus build-first course](#) — we start from `git init`, and pull in each concept the moment the build needs it.
+> Built build-first: start from `git init`, and pull in each concept the moment the build needs it.
 
 ---
 
@@ -20,7 +20,7 @@ Each module is a self-contained lesson. The chapter references point to the full
 
 | Module | The concept, in one line | Deep dive |
 |---|---|---|
-| `llm/` | Talk to a model — local (Ollama) or cloud, one interface | SDK comparison |
+| `llm/` | Talk to a model — local (Ollama) or cloud (Claude, GPT, Gemini), one interface | SDK comparison |
 | `sampling.py` | The knobs that shape every output (temperature, top-p, stop) | Foundations |
 | `tools/` | **Function calling** — give the model hands it can actually use | Tool use |
 | `schema.py` | **Structured output** — outputs your code can trust (Pydantic) | Structured output |
@@ -46,8 +46,8 @@ ollama pull gemma3              # or llama3.1, qwen2.5, hermes3
 musaeus chat                    # talk to your local assistant
 
 # 3. or point it at a cloud provider
-cp .env.example .env            # add ANTHROPIC_API_KEY / OPENAI_API_KEY
-musaeus chat --provider anthropic
+cp .env.example .env            # add ANTHROPIC_API_KEY / OPENAI_API_KEY / GOOGLE_API_KEY
+musaeus chat --provider anthropic   # or: openai | google
 ```
 
 ## Design principles

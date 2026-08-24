@@ -30,15 +30,19 @@ def _load_dotenv(path: str = ".env") -> None:
 
 @dataclass(frozen=True)
 class Settings:
-    provider: str = "local"                 # local | anthropic | openai
+    provider: str = "local"                 # local | anthropic | openai | google
     # Per-provider model + credentials. `local` uses an OpenAI-compatible gateway.
     anthropic_api_key: str | None = None
     openai_api_key: str | None = None
+    google_api_key: str | None = None
     local_base_url: str = "http://localhost:11434/v1"
     local_model: str = "gemma3"
-    # Sane default models per provider (override with --model).
-    anthropic_model: str = "claude-sonnet-4-6"
-    openai_model: str = "gpt-4o-mini"
+    # Sane default models per provider (override with --model or MUSAEUS_*_MODEL).
+    # `gemini-flash-latest` is Google's moving alias for the current Flash model,
+    # so the default keeps working as new generations ship.
+    anthropic_model: str = "claude-opus-5"
+    openai_model: str = "gpt-5-mini"
+    google_model: str = "gemini-flash-latest"
 
     @property
     def model_for(self) -> str:
@@ -46,6 +50,7 @@ class Settings:
             "local": self.local_model,
             "anthropic": self.anthropic_model,
             "openai": self.openai_model,
+            "google": self.google_model,
         }[self.provider]
 
 
@@ -55,11 +60,20 @@ def load_settings(provider: str | None = None, model: str | None = None) -> Sett
         provider=provider or os.getenv("MUSAEUS_PROVIDER", "local"),
         anthropic_api_key=os.getenv("ANTHROPIC_API_KEY") or None,
         openai_api_key=os.getenv("OPENAI_API_KEY") or None,
+        google_api_key=os.getenv("GOOGLE_API_KEY") or None,
         local_base_url=os.getenv("MUSAEUS_LOCAL_BASE_URL", "http://localhost:11434/v1"),
         local_model=os.getenv("MUSAEUS_LOCAL_MODEL", "gemma3"),
+        anthropic_model=os.getenv("MUSAEUS_ANTHROPIC_MODEL", "claude-opus-5"),
+        openai_model=os.getenv("MUSAEUS_OPENAI_MODEL", "gpt-5-mini"),
+        google_model=os.getenv("MUSAEUS_GOOGLE_MODEL", "gemini-flash-latest"),
     )
     if model:
         # Override whichever provider's model is active.
-        field = {"local": "local_model", "anthropic": "anthropic_model", "openai": "openai_model"}[s.provider]
+        field = {
+            "local": "local_model",
+            "anthropic": "anthropic_model",
+            "openai": "openai_model",
+            "google": "google_model",
+        }[s.provider]
         s = Settings(**{**s.__dict__, field: model})
     return s

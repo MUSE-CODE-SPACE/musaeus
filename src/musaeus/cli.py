@@ -29,7 +29,7 @@ console = Console()
 
 @app.command()
 def chat(
-    provider: str = typer.Option("local", help="local | anthropic | openai"),
+    provider: str = typer.Option("local", help="local | anthropic | openai | google"),
     model: str | None = typer.Option(None, help="Override the provider's default model."),
     system: str | None = typer.Option(None, help="Optional system prompt for the agent."),
 ) -> None:
@@ -83,7 +83,9 @@ def version() -> None:
         console.print(_v("musaeus"))
     except Exception:
         # Not installed as a distribution (e.g. running from a source checkout).
-        console.print("0.1.0")
+        from musaeus import __version__
+
+        console.print(__version__)
 
 
 if __name__ == "__main__":
