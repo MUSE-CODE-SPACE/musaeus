@@ -104,12 +104,11 @@ class Agent:
         return last or f"(stopped after {self.max_steps} steps without a final answer)"
 
     # -- message shaping ----------------------------------------------------
-    # These build the two message shapes the loop appends. We target the
-    # OpenAI-compatible wire format (local Ollama + OpenAI), which is what the
-    # llm module speaks by default. Anthropic's native format expects tool_use /
-    # tool_result *content blocks* instead of a "tool" role; if you point this
-    # agent at the anthropic provider, translate here — the shapes are documented
-    # in llm/__init__.py (_anthropic).
+    # These build the two message shapes the loop appends, in the agent's ONE
+    # internal dialect: the OpenAI-compatible wire format. Providers that speak
+    # something else are the llm module's problem — `_to_anthropic_messages` in
+    # llm/__init__.py rewrites these into Anthropic content blocks, so this loop
+    # never branches on provider.
 
     @staticmethod
     def _assistant_tool_turn(reply) -> Message:
