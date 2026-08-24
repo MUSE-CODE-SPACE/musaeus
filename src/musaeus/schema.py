@@ -63,7 +63,9 @@ def _extract_json(text: str) -> str:
     We strip ```json fences and, failing that, grab the outermost {...} span. This
     is deliberately forgiving — validation downstream is the real gatekeeper.
     """
-    fenced = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
+    # Greedy `.*` on purpose: a lazy match stops at the first `}` and mangles
+    # nested objects.
+    fenced = re.search(r"```(?:json)?\s*(\{.*\})\s*```", text, re.DOTALL)
     if fenced:
         return fenced.group(1)
     braces = re.search(r"\{.*\}", text, re.DOTALL)

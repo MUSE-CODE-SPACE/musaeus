@@ -34,7 +34,13 @@ import json
 import subprocess
 from typing import Any
 
-PROTOCOL_VERSION = "2024-11-05"  # the MCP revision our handshake advertises
+from .. import __version__
+
+# The MCP revision our handshake advertises. Revisions are date-stamped by the
+# spec ("2026-07-28" superseded "2025-11-25"); during `initialize` a server that
+# does not speak ours replies with the newest revision it does, and the verbs we
+# use (tools/list, tools/call over stdio) are stable across all of them.
+PROTOCOL_VERSION = "2026-07-28"
 
 
 class MCPError(RuntimeError):
@@ -169,7 +175,7 @@ class MCPClient:
         result = self._send("initialize", {
             "protocolVersion": PROTOCOL_VERSION,
             "capabilities": {},
-            "clientInfo": {"name": "musaeus", "version": "0.1.0"},
+            "clientInfo": {"name": "musaeus", "version": __version__},
         })
         self._send("notifications/initialized", notify=True)
         return result

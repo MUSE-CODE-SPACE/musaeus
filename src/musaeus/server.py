@@ -76,7 +76,9 @@ def create_app():
             "    pip install 'musaeus[server]'"
         ) from exc
 
-    app = FastAPI(title="Musaeus", version="0.1.0")
+    from musaeus import __version__
+
+    app = FastAPI(title="Musaeus", version=__version__)
 
     @app.get("/health")
     async def health() -> dict[str, str]:

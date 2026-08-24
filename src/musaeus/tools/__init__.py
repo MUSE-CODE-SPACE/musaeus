@@ -23,10 +23,10 @@ from __future__ import annotations
 import ast
 import inspect
 import operator
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable, get_type_hints
+from typing import Any, Callable, get_origin, get_type_hints
 
 # --- type hint -> JSON Schema -----------------------------------------------
 # The model needs JSON Schema, not Python types. This is the whole mapping; if a
@@ -55,7 +55,11 @@ def _schema_for(func: Callable) -> dict[str, Any]:
     for name, param in sig.parameters.items():
         if name == "self":
             continue
-        json_type = _JSON_TYPES.get(hints.get(name, str), "string")
+        hint = hints.get(name, str)
+        # `list[str]` is not `list` — generics hide their base type behind
+        # get_origin(). Anything we still can't name degrades to "string",
+        # which every provider accepts.
+        json_type = _JSON_TYPES.get(hint) or _JSON_TYPES.get(get_origin(hint), "string")
         properties[name] = {"type": json_type}
         if param.default is inspect.Parameter.empty:
             required.append(name)
@@ -175,7 +179,7 @@ def now() -> str:
 
 @tool
 def read_file(path: str) -> str:
-    """Read a UTF-8 text file and return its contents (capped at 20 KB)."""
+    """Read a UTF-8 text file and return its contents (capped at 20,000 characters)."""
     cap = 20_000
     data = Path(path).read_text(encoding="utf-8", errors="replace")
-    return data if len(data) <= cap else data[:cap] + f"\n...[truncated at {cap} bytes]"
+    return data if len(data) <= cap else data[:cap] + f"\n...[truncated at {cap} characters]"

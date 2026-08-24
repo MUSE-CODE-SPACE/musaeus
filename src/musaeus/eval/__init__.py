@@ -55,7 +55,9 @@ def _extract_json(text: str) -> dict[str, Any]:
     parsing is not optional here: a judge that occasionally chats before its JSON
     should not crash a 200-case eval run.
     """
-    fenced = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
+    # Greedy `.*` on purpose: a lazy match stops at the first `}` and mangles
+    # nested objects.
+    fenced = re.search(r"```(?:json)?\s*(\{.*\})\s*```", text, re.DOTALL)
     candidate = fenced.group(1) if fenced else None
     if candidate is None:
         brace = re.search(r"\{.*\}", text, re.DOTALL)
